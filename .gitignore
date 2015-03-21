@@ -1,0 +1,16 @@
+conf/credentials.txt
+logs
+project/*
+target
+/.idea
+/*.iml
+tmp
+dist
+/out
+/.idea_modules
+/.classpath
+/.project
+/RUNNING_PID
+/.settings
+
+    
