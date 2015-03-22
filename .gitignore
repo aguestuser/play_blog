@@ -1,6 +1,5 @@
-conf/credentials.txt
 logs
-project/*
+/project
 target
 /.idea
 /*.iml
@@ -12,5 +11,6 @@ dist
 /.project
 /RUNNING_PID
 /.settings
+silly_blog-build
 
     
