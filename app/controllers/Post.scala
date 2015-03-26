@@ -19,13 +19,6 @@ object Post extends Controller {
       "body" → text(minLength = 2)
     )(PostData.apply)(PostData.unapply) }
 
-//  val editPostForm = Form {
-//    mapping(
-//      "id" → longNumber,
-//      "title" ->  text(minLength = 2),
-//      "body" ->  text(minLength = 2)
-//    )(PostRepo.apply)(PostRepo.unapply) }
-
   def show(id: Long) = Action { implicit request =>
     dao.Post.find(id) match {
       case None => NotFound.flashing("error" → s"Couldn't find a contact with id $id")
@@ -52,7 +45,8 @@ object Post extends Controller {
 
   def getEdit(id: Long) = Action { implicit request ⇒
     dao.Post.find(id) match {
-      case None ⇒ NotFound.flashing("error" → s"Couldn't find post with id $id")
+      case None ⇒ NotFound.flashing(
+        "error" → s"Couldn't find post with id $id")
       case Some(pr) ⇒ Ok(views.html.posts.getEdit(id,postForm.fill(pr.toData))) } }
 
   def edit(id: Long) = Action { implicit request ⇒
@@ -67,5 +61,6 @@ object Post extends Controller {
 
   def delete(id: Long) = Action { implicit request ⇒
     dao.Post.delete(id) match {
-      case 1 ⇒ Redirect(routes.Post.list()).flashing("success" → "Post deleted.") } }
+      case 1 ⇒ Redirect(routes.Post.list()).flashing(
+        "success" → "Post deleted.") } }
 }

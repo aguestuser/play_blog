@@ -6,17 +6,36 @@
     <h1>Posts</h1>
 
     <div id="#newpost">
-        Write <a href="@routes.Post.getCreate()"> New Post</a>
+        <a href="@routes.Post.getCreate()">Create Post</a>
     </div>
+
     <div id="#postlist">
-        <ul>
+
         @for(post <- posts){
-            <li>
-                <a href="/posts/@post.id">@post.title</a>
-                | <a href="@routes.Post.getEdit(post.id)">Edit</a>
-                | @form(routes.Post.delete(post.id)){ <input type="submit" value="Delete"> }
-            </li>
+
+            <div class="postTitle">
+                <h2>@post.title</h2>
+            </div>
+
+            <div class="postBody">
+                <p>@post.body</p>
+            </div>
+
+            <div class="postButton">
+            @form(routes.Post.getEdit(post.id)){
+                <input type="submit" value="Edit"> }
+            </div>
+
+            <div class="postButton">
+            @form(routes.Post.delete(post.id)){
+                <input type="submit" value="Delete"> }
+            </div>
         }
-        </ul>
+    </div>
+
+    <div id="#newpost">
+        <p>
+            <a href="@routes.Post.getCreate()">Create Post</a>
+        </p>
     </div>
 }

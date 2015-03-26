@@ -6,6 +6,13 @@
 
     <h1> @post.title </h1>
     <p> @post.body </p>
-    <a href="@routes.Post.getEdit(post.id)">Edit</a>
-    | @form(routes.Post.delete(post.id)){ <input type="submit" value="Delete"> }
+    <div class="postButton">
+        @form(routes.Post.getEdit(post.id)){
+            <input type="submit" value="Edit"> }
+    </div>
+    <div class="postButton">
+        @form(routes.Post.delete(post.id)){
+            <input type="submit" value="Delete"> }
+    </div>
+
 }
