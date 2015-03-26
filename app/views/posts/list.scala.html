@@ -1,0 +1,10 @@
+@(posts: List[PostRepo])
+
+@main("Posts") {
+    <h1>Posts</h1>
+    <ul>
+    @for(post <- posts){
+        <li> <a href="/posts/@post.id">@post.title</a></li>
+    }
+    </ul>
+}

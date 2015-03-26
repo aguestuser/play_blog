@@ -1,9 +1,0 @@
-@(posts: List[Post])
-
-@main("Posts") {
-    <ul>
-        @for(post <- posts){
-            <li> <a href="/posts/@post.id">@post.title</a></li>
-        }
-    </ul>
-}

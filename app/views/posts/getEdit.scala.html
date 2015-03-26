@@ -1,0 +1,18 @@
+@(id: Long, postForm: Form[PostRepo])
+
+@import helper.{form, inputText}
+
+<h1>Edit Post</h1>
+@if(postForm.hasGlobalErrors) {
+    <ul>
+    @for(error <- postForm.globalErrors) {
+        <li>@error.message</li>
+    }
+    </ul>
+}
+
+@form(action = routes.Post.edit(id)) {
+    @inputText(postForm("title"))
+    @inputText(postForm("body"))
+    <input type="submit" value="Edit">
+}
