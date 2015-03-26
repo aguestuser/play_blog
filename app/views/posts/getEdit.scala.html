@@ -1,6 +1,6 @@
-@(id: Long, postForm: Form[PostRepo])
+@(id: Long, postForm: Form[PostData])
 
-@import helper.{form, inputText}
+@import helper.{form,inputText,textarea}
 
 <h1>Edit Post</h1>
 @if(postForm.hasGlobalErrors) {
@@ -13,6 +13,6 @@
 
 @form(action = routes.Post.edit(id)) {
     @inputText(postForm("title"))
-    @inputText(postForm("body"))
+    @textarea(postForm("body"))
     <input type="submit" value="Edit">
 }

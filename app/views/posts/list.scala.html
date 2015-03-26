@@ -1,10 +1,22 @@
 @(posts: List[PostRepo])
 
+@import helper.{form}
+
 @main("Posts") {
     <h1>Posts</h1>
-    <ul>
-    @for(post <- posts){
-        <li> <a href="/posts/@post.id">@post.title</a></li>
-    }
-    </ul>
+
+    <div id="#newpost">
+        Write <a href="@routes.Post.getCreate()"> New Post</a>
+    </div>
+    <div id="#postlist">
+        <ul>
+        @for(post <- posts){
+            <li>
+                <a href="/posts/@post.id">@post.title</a>
+                | <a href="@routes.Post.getEdit(post.id)">Edit</a>
+                | @form(routes.Post.delete(post.id)){ <input type="submit" value="Delete"> }
+            </li>
+        }
+        </ul>
+    </div>
 }

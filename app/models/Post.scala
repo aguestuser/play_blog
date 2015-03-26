@@ -7,7 +7,9 @@ package models
 
 trait Post
 case class PostData(title: String, body: String) extends Post
-case class PostRepo(id: Long, title: String, body: String) extends Post
+case class PostRepo(id: Long, title: String, body: String) extends Post {
+  def toData: PostData = PostData(title,body)
+}
 
 //trait PostRepo {
 //

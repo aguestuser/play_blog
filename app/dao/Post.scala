@@ -1,6 +1,6 @@
 package dao
 
-import models.PostRepo
+import models.{PostData, PostRepo}
 
 /**
  * Author: @aguestuser
@@ -22,17 +22,16 @@ object Post {
     get[String]("title") ~ get[String]("body") map {
       case t ~ b ⇒ models.PostData(t,b) } }
 
-//  def find(p: Post): Option[Post] = find(p.id)
   def find(id: Long): Option[PostRepo] =
     DB.withConnection { implicit c =>
-      SQL"select * from posts where id = {id}"
+      SQL"select * from posts where id = $id"
         .as(pr *) match {
           case Nil ⇒ None
           case p ⇒ Some(p.head) } }
 
   def list: List[PostRepo] =
     DB.withConnection { implicit c =>
-      SQL("select * from posts")
+      SQL"select * from posts"
         .as(pr *) } // TODO add "order by created asc"
 
   def create(title: String, body: String): Option[Long] =
@@ -40,14 +39,14 @@ object Post {
       SQL"insert into posts (title,body) values ($title,$body)"
         .executeInsert() }
 
-  def edit(id: Long, p: PostRepo): Int =
+  def edit(id: Long, p: PostData): Int =
     DB.withConnection { implicit c =>
-      SQL"""update posts set title = ${p.title}, body = ${p.body} where id = ${p.id}"""
+      SQL"""update posts set title = ${p.title}, body = ${p.body} where id = ${id}"""
         .executeUpdate() }
 
   def delete(id: Long): Int =
     DB.withConnection { implicit c =>
-      SQL"delete from posts where id = ${id}"
+      SQL"delete from posts where id = $id"
         .executeUpdate() }
 
 }
