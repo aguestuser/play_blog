@@ -1,4 +1,4 @@
-@(id: Long, postForm: Form[PostData])
+@(id: Long, postForm: Form[Post])
 
 @import helper.{form,inputText,textarea}
 
@@ -11,7 +11,7 @@
     </ul>
 }
 
-@form(action = routes.Post.edit(id)) {
+@form(action = routes.PostController.edit(id)) {
     @inputText(postForm("title"))
     @textarea(postForm("body"))
     <input type="submit" value="Save">

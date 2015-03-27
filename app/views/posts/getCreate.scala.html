@@ -1,9 +1,9 @@
-@(postForm: Form[PostData])
+@(postForm: Form[Post])
 
 @import helper.{form,inputText,textarea}
 
 <h1>New Post</h1>
-@form(action = routes.Post.create()) {
+@form(action = routes.PostController.create()) {
     @inputText(postForm("title"))
     @textarea(postForm("body"))
     <input type="submit" value="Save">
