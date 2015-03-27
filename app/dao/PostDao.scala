@@ -47,7 +47,8 @@ object PostDao extends DbName {
         .as(pr *) } // TODO add "order by created asc"
 
   def create(title: String, body: String): Option[Long] =
-    DB.withConnection(dbName) { implicit c =>
+    if (title.length <= 2 || body.length <= 2) None
+    else DB.withConnection(dbName) { implicit c =>
       SQL"insert into posts (title,body) values ($title,$body)"
         .executeInsert() }
 
