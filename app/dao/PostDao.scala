@@ -47,19 +47,25 @@ object PostDao extends DbName {
         .as(pr *) } // TODO add "order by created asc"
 
   def create(title: String, body: String): Option[Long] =
-    if (title.length <= 2 || body.length <= 2) None
-    else DB.withConnection(dbName) { implicit c =>
-      SQL"insert into posts (title,body) values ($title,$body)"
-        .executeInsert() }
+    Post.validate(Post(title,body)) flatMap { p ⇒
+      DB.withConnection(dbName) { implicit c =>
+        SQL"insert into posts (title,body) values (${p.title},${p.body})"
+          .executeInsert() } }
 
-  def edit(id: Long, p: Post): Int =
-    DB.withConnection(dbName) { implicit c =>
-      SQL"""update posts set title = ${p.title}, body = ${p.body} where id = $id"""
-        .executeUpdate() }
+  def edit(id: Long, np: Post): Option[Int] =
+    Post.validate(np) flatMap { p ⇒
+      optionify { DB.withConnection(dbName) { implicit c =>
+        SQL"""update posts set title = ${p.title}, body = ${p.body} where id = $id"""
+          .executeUpdate() } } }
 
-  def delete(id: Long): Int =
-    DB.withConnection(dbName) { implicit c =>
+  def delete(id: Long): Option[Int] =
+    optionify { DB.withConnection(dbName) { implicit c =>
       SQL"delete from posts where id = $id"
-        .executeUpdate() }
+        .executeUpdate() } }
+
+  private def optionify(i: Int): Option[Int] = i match {
+    case 0 ⇒ None
+    case 1 ⇒ Some(1)
+  }
 
 }

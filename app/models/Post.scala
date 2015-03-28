@@ -22,6 +22,14 @@ object Post {
     (JsPath \ "title").write[String] and
       (JsPath \ "body").write[String]
     )(unlift(Post.unapply))
+
+  def validate(p: Post): Option[Post] = {
+    val conditions = List(
+      p.title.length > 2,
+      p.body.length > 2
+    )
+    if ((true /: conditions)(_ && _)) Some(p) else None
+  }
 }
 
 //trait Post

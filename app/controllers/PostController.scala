@@ -67,12 +67,16 @@ object PostController extends Controller {
           "error" → "There were errors with your submission.") },
       p ⇒ {
         dao.PostDao.edit(id,p) match {
-          case 1 ⇒ Redirect(routes.PostController.list()).flashing(
-            "success" → "Post edited!") } }) }
+          case None ⇒ Redirect(routes.PostController.getEdit(id)).flashing(
+            "error" → "There was an error saving your edits. Please re-enter.")
+          case Some(1) ⇒ Redirect(routes.PostController.list()).flashing(
+            "success" → "Post edited!")}})}
 
   def delete(id: Long) = Action { implicit request ⇒
     dao.PostDao.delete(id) match {
-      case 1 ⇒ Redirect(routes.PostController.list()).flashing(
+      case None ⇒ Redirect(routes.PostController.list()).flashing(
+        "error" → "There was an error deleting the post. Please try again.")
+      case Some(1) ⇒ Redirect(routes.PostController.list()).flashing(
         "success" → "Post deleted.") } }
 
 
