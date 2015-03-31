@@ -10,12 +10,12 @@ GET         /assets/*file          controllers.Assets.at(path="/public", file)
 
 # Post routes
 
+GET         /posts/:id             controllers.PostController.show(id: Long)
+GET         /posts/get/:id         controllers.PostController.getOne(id: Long)
 GET         /posts/                controllers.PostController.list
 GET         /posts/get/            controllers.PostController.getAll
-GET         /posts/get/:id         controllers.PostController.getOne(id: Long)
-GET         /posts/:id             controllers.PostController.show(id: Long)
-POST        /posts/:id             controllers.PostController.delete(id: Long)
 GET         /posts/create/         controllers.PostController.getCreate
 POST        /posts/create/         controllers.PostController.create
 GET         /posts/edit/:id        controllers.PostController.getEdit(id: Long)
 POST        /posts/edit/:id        controllers.PostController.edit(id: Long)
+POST        /posts/:id             controllers.PostController.delete(id: Long)

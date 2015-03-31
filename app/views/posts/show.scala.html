@@ -1,18 +1,18 @@
-@(pr: dao.PostDao)
+@(title: String)
 
 @import helper.form
 
-@main("Post") {
+@main(title) {
 
-    <h1> @pr.post.title </h1>
-    <p> @pr.post.body </p>
-    <div class="postButton">
-        @form(routes.PostController.getEdit(pr.id)){
-            <input type="submit" value="Edit"> }
-    </div>
-    <div class="postButton">
-        @form(routes.PostController.delete(pr.id)){
-            <input type="submit" value="Delete"> }
-    </div>
+    @*<h1> @pr.post.title </h1>*@
+    @*<p> @pr.post.body </p>*@
+    @*<div class="postButton">*@
+        @*@form(routes.PostController.getEdit(pr.id)){*@
+            @*<input type="submit" value="Edit"> }*@
+    @*</div>*@
+    @*<div class="postButton">*@
+        @*@form(routes.PostController.delete(pr.id)){*@
+            @*<input type="submit" value="Delete"> }*@
+    @*</div>*@
 
 }

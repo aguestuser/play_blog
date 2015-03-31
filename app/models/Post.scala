@@ -3,6 +3,9 @@ package models
 import play.api.libs.json._
 import Reads._
 import play.api.libs.functional.syntax._
+
+import scalaz.Reader
+
 /**
  * Author: @aguestuser
  * Date: 3/21/15
@@ -30,6 +33,14 @@ object Post {
     )
     if ((true /: conditions)(_ && _)) Some(p) else None
   }
+
+  def find(id: Long) = Reader { (repo: PostRepoImpl) ⇒ repo.find(id) }
+  def findAll = Reader { (repo: PostRepoImpl) ⇒ repo.findAll }
+  def create(p: Post) = Reader { (repo: PostRepoImpl) ⇒ repo.create(p) }
+  def edit(id: Long, edits: Post) = Reader { (repo: PostRepoImpl) ⇒ repo.edit(id,edits) }
+  def delete(id: Long) = Reader { (repo: PostRepoImpl) ⇒ repo.delete(id) }
+
+
 }
 
 //trait Post

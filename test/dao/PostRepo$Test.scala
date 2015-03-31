@@ -1,27 +1,21 @@
 package dao
 
-import anorm.SqlParser._
 import anorm._
-import models.Post
+import models.{Post, PostDao, PostRepo}
 import org.specs2.execute.AsResult
 import org.specs2.mutable.Specification
 import org.specs2.specification.{After, Scope}
 import play.api.db.DB
 import play.api.test.WithApplication
+import sample_data.FakePosts
+
 
 /**
- * Author: @aguestuser
- * Date: 3/26/15
- */
+* Author: @aguestuser
+* Date: 3/26/15
+*/
 
 trait WithDb extends WithApplication with Scope {
-
-  val count = { get[Int]("count") }
-
-  val posts = List(
-    Post("first post", "what should i write?"),
-    Post("second post", "i'm getting the hang of this"),
-    Post("last post", "i think i'll try twitter"))
 
   def setup(ps: List[Post]): List[Long] = {
     val res:List[Option[Long]] = DB.withConnection("test") { implicit c ⇒
@@ -36,12 +30,14 @@ trait WithDb extends WithApplication with Scope {
         SQL"delete from posts where id = $id"
           .executeUpdate() } }
 
-  def numPosts: Int =
-    DB.withConnection("test") { implicit c ⇒
-      SQL"select count(*) from posts".as(count *).head }
+//  val count = { get[Int]("count") }
+//
+//  def numPosts: Int =
+//    DB.withConnection("test") { implicit c ⇒
+//      SQL"select count(*) from posts".as(count *).head }
 }
 
-class PostDao$Test extends Specification {
+class PostRepo$Test extends Specification with FakePosts {
 
   "Post DAO" should {
 
@@ -52,14 +48,14 @@ class PostDao$Test extends Specification {
         def after = teardown(ids)
 
         def run = this {
-          PostDao.find(ids.head) === Some(PostDao(ids.head, posts.head))
-          PostDao.find(ids(1)) === Some(PostDao(ids(1), posts(1)))
-          PostDao.find(ids(2)) === Some(PostDao(ids(2), posts(2))) } }
+          PostDao.find(ids.head) === Some(PostRepo(ids.head, posts.head))
+          PostDao.find(ids(1)) === Some(PostRepo(ids(1), posts(1)))
+          PostDao.find(ids(2)) === Some(PostRepo(ids(2), posts(2))) } }
 
       AsResult.effectively(ex().run)
     }
 
-    "not find a non-existent post" >> new WithDb { 
+    "not find a non-existent post" >> new WithDb {
       PostDao.find(666) === None
     }
 
@@ -71,9 +67,9 @@ class PostDao$Test extends Specification {
         def run = this {
 
           PostDao.findAll === List( // TODO make a contains test?
-            PostDao(ids.head, posts.head),
-            PostDao(ids(1), posts(1)),
-            PostDao(ids(2), posts(2))) } }
+            PostRepo(ids.head, posts.head),
+            PostRepo(ids(1), posts(1)),
+            PostRepo(ids(2), posts(2))) } }
 
       AsResult.effectively(ex().run)
     }
@@ -86,18 +82,18 @@ class PostDao$Test extends Specification {
     "create a post" >> new WithDb {
 
       case class ex() extends After {
-        val id = PostDao.create("second thoughts", "turns out i don't like twitter")
+        val id = PostDao.create(Post("second thoughts", "turns out i don't like twitter"))
         def after = teardown(List(id.get))
         def run = this {
 
           id must beSome
-          PostDao.find(id.get) === Some(PostDao(id.get, Post("second thoughts", "turns out i don't like twitter"))) } }
+          PostDao.find(id.get) === Some(PostRepo(id.get, Post("second thoughts", "turns out i don't like twitter"))) } }
 
       AsResult.effectively(ex().run)
     }
 
-    "not create an improperly formatted post" >> new WithDb {  
-      PostDao.create("t","b") === None
+    "not create an improperly formatted post" >> new WithDb {
+      PostDao.create(Post("t","b")) === None
     }
 
     "edit a post" >> new WithDb {
@@ -108,7 +104,7 @@ class PostDao$Test extends Specification {
         def run = this {
 
           PostDao.edit(ids.head, Post("changed my mind", "I Think I'll Try Capital Letters.")) === Some(1)
-          PostDao.find(ids.head) === Some(PostDao(ids.head,Post("changed my mind", "I Think I'll Try Capital Letters."))) } }
+          PostDao.find(ids.head) === Some(PostRepo(ids.head,Post("changed my mind", "I Think I'll Try Capital Letters."))) } }
 
      AsResult.effectively(ex().run)
     }
@@ -121,12 +117,12 @@ class PostDao$Test extends Specification {
         def run = this {
 
           PostDao.edit(ids.head, Post("a","b")) === None
-          PostDao.find(ids.head) === Some(PostDao(ids.head, posts.head)) } }
+          PostDao.find(ids.head) === Some(PostRepo(ids.head, posts.head)) } }
 
       AsResult.effectively(ex().run)
     }
 
-    "not edit a post that doesn't exist" >> new WithDb {  
+    "not edit a post that doesn't exist" >> new WithDb {
       PostDao.edit(666, Post("oh hai!", "this probably wont' get written")) === None
     }
 
@@ -143,7 +139,7 @@ class PostDao$Test extends Specification {
       AsResult.effectively(ex().run)
     }
 
-    "not delete a post that does't exist" >> new WithDb {  
+    "not delete a post that does't exist" >> new WithDb {
       PostDao.delete(666) === None
     }
   }

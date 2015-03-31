@@ -16,28 +16,6 @@
     <div id="posts">
     </div>
 
-        @*@for(post <- posts){*@
-
-            @*<div class="postTitle">*@
-                @*<h2>@post.title</h2>*@
-            @*</div>*@
-
-            @*<div class="postBody">*@
-                @*<p>@post.body</p>*@
-            @*</div>*@
-
-            @*<div class="postButton">*@
-            @*@form(routes.PostController.getEdit(post.id)){*@
-                @*<input type="submit" value="Edit"> }*@
-            @*</div>*@
-
-            @*<div class="postButton">*@
-            @*@form(routes.PostController.delete(post.id)){*@
-                @*<input type="submit" value="Delete"> }*@
-            @*</div>*@
-        @*}*@
-    @*</div>*@
-
     <div id="#newpost">
         <p>
             <a href="@routes.PostController.getCreate()">Create Post</a>

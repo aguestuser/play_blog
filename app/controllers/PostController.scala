@@ -1,12 +1,12 @@
 package controllers
 
-//import models.PostData
+import models.PostDao._
 
+import models._
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.libs.json._
 import play.api.mvc.{Action, Controller}
-
 
 
 /**
@@ -14,50 +14,40 @@ import play.api.mvc.{Action, Controller}
  * Date: 3/21/15
  */
 
-object PostController extends Controller {
+object PostController extends PostController(PostDao)
+
+class PostController(repo: PostRepoImpl) extends Controller {
+
+  import scalaz.Reader
 
   val postForm = Form {
     mapping(
       "title" → text(minLength = 2),
       "body" → text(minLength = 2)
-    )(models.Post.apply)(models.Post.unapply) }
+    )(Post.apply)(Post.unapply) }
 
-  def show(id: Long) = Action { implicit request =>
-    dao.PostDao.find(id) match {
-      case None => NotFound.flashing("error" → s"Couldn't find a contact with id $id")
-      case Some(pr) => Ok(views.html.posts.show(pr)) } }
+  private def run[A](reader: Reader[PostRepoImpl,A]): A = { reader(repo) }
 
-  def getOne(id: Long) = Action { implicit request ⇒
-    dao.PostDao.find(id) match {
-      case None => NotFound.flashing("error" → s"Couldn't find a contact with id $id")
-      case Some(pr) => Ok(Json.toJson(pr)) } }
+  def show(id: Long) = Action { Ok(views.html.posts.show("Post")) }
+  def getOne(id: Long) = Action { Ok(Json.toJson(run(Post.find(id)))) }
 
-  def list = Action { implicit request =>
-    Ok(views.html.posts.list("Posts")) }
+  def list = Action { implicit request ⇒ Ok(views.html.posts.list("Posts")) }
+  def getAll = Action { Ok(Json.toJson(run(Post.findAll))) }
 
-  def getAll = Action { implicit request ⇒
-    dao.PostDao.findAll match {
-      case Nil => NotFound.flashing("error" → "There were no posts to list!")
-      case ps => Ok(Json.toJson(ps)) } }
-
-  def getCreate = Action { implicit request ⇒
-    Ok(views.html.posts.getCreate(postForm)) }
-
-  def create = Action { implicit request ⇒
+  def getCreate = Action { Ok(views.html.posts.getCreate(postForm)) }
+  def create = Action { implicit req ⇒
     postForm.bindFromRequest.fold(
       formWithErrors ⇒ {
-        BadRequest(views.html.posts.getCreate(formWithErrors)).flashing(
-          "error" → "There were errors with your submission.") },
+        BadRequest(views.html.posts.getCreate(formWithErrors))},
       p ⇒ {
-        dao.PostDao.create(p.title,p.body) match {
+        run(Post.create(p)) match {
           case None ⇒ NotFound.flashing("error" → "Whoops!")
           case Some(id) ⇒ Redirect(routes.PostController.list()).flashing(
             "success" → "Post created!") } }) }
 
-  def getEdit(id: Long) = Action { implicit request ⇒
-    dao.PostDao.find(id) match {
-      case None ⇒ NotFound.flashing(
-        "error" → s"Couldn't find post with id $id")
+  def getEdit(id: Long) = Action {
+    run(Post.find(id)) match {
+      case None ⇒ NotFound.flashing("error" → s"Couldn't find post with id $id")
       case Some(pr) ⇒ Ok(views.html.posts.getEdit(id,postForm.fill(pr.post))) } }
 
   def edit(id: Long) = Action { implicit request ⇒
@@ -66,18 +56,17 @@ object PostController extends Controller {
         BadRequest(views.html.posts.getEdit(id,formWithErrors)).flashing(
           "error" → "There were errors with your submission.") },
       p ⇒ {
-        dao.PostDao.edit(id,p) match {
+        run(Post.edit(id,p)) match {
           case None ⇒ Redirect(routes.PostController.getEdit(id)).flashing(
             "error" → "There was an error saving your edits. Please re-enter.")
-          case Some(1) ⇒ Redirect(routes.PostController.list()).flashing(
+          case Some(_) ⇒ Redirect(routes.PostController.list()).flashing(
             "success" → "Post edited!")}})}
 
   def delete(id: Long) = Action { implicit request ⇒
-    dao.PostDao.delete(id) match {
+    run(Post.delete(id)) match {
       case None ⇒ Redirect(routes.PostController.list()).flashing(
         "error" → "There was an error deleting the post. Please try again.")
-      case Some(1) ⇒ Redirect(routes.PostController.list()).flashing(
+      case Some(_) ⇒ Redirect(routes.PostController.list()).flashing(
         "success" → "Post deleted.") } }
-
 
 }

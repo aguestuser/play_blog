@@ -10,4 +10,6 @@ libraryDependencies ++= Seq( jdbc , anorm , cache , ws )
 
 libraryDependencies += "org.postgresql" % "postgresql" % "9.4-1200-jdbc41"
 
+libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.0.6"
+
 unmanagedResourceDirectories in Test <+=  baseDirectory ( _ /"target/web/public/test" )  
