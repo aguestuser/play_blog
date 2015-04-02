@@ -3,7 +3,18 @@ $ ->
 
   $.get "/posts/get/"+id, (repo) ->
 
-    $('#post-container')
+    console.log("repo", repo)
+
+    if $.isEmptyObject(repo)
+
+      $('#post-container')
+
+        .append ( $('<div>').attr 'class', 'post-not-found'
+          .append $('<p>').text "There is no post with id " + id)
+
+    else
+
+      $('#post-container')
 
         .append ( $('<div>').attr 'class', 'post-title'
           .append( $('<h2>').text repo.post.title ) )
@@ -15,4 +26,7 @@ $ ->
           .append( $('<a>')
             .attr 'href', '/posts/edit/' + repo.id
             .text 'Edit' ) )
+
+
+
 
