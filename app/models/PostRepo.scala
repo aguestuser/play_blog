@@ -2,36 +2,23 @@ package models
 
 import anorm.SqlParser._
 import play.api.libs.functional.syntax._
-import play.api.libs.json.{Writes, JsPath, Reads}
+import play.api.libs.json.{Format, JsPath}
 
 /**
  * Author: @aguestuser
  * Date: 3/25/15
  */
 
-
 case class PostRepo(id: Long, post: Post)
 
-trait PostRepoImpl {
-
-  implicit val postRepoReads: Reads[PostRepo] = (
-    (JsPath \ "id").read[Long] and
-      (JsPath \ "post").read[Post]
-    )(PostRepo.apply _)
-
-  implicit val postRepoWrites: Writes[PostRepo] = (
-    (JsPath \ "id").write[Long] and
-      (JsPath \ "post").write[Post]
-    )(unlift(PostRepo.unapply))
-
-  def find(id:Long): Option[PostRepo]
-  def findAll: List[PostRepo]
-  def create(p: Post): Option[Long]
-  def edit(id: Long, p: Post): Option[Int]
-  def delete(id: Long): Option[Int]
+trait PostJson {
+  implicit val postResourceFormat: Format[PostRepo] = (
+    (JsPath \ "id").format[Long] and
+      (JsPath \ "post").format[Post]
+    )(PostRepo.apply, unlift(PostRepo.unapply))
 }
 
-object PostDao extends dao.DbName with PostRepoImpl {
+object PostRepo extends dao.DbName with PostJson {
 
   import anorm._
   import play.api.Play.current
@@ -72,7 +59,14 @@ object PostDao extends dao.DbName with PostRepoImpl {
 
   private def optionify(i: Int): Option[Int] = i match {
     case 0 ⇒ None
-    case 1 ⇒ Some(1)
+    case _ ⇒ Some(1)
   }
-
 }
+
+
+//
+//trait PostRepooo
+//case class PostResource(id: Long, post: Post) extends PostRepooo
+//case class PostColl(l: List[PostRepo]) extends PostRepooo
+//case class PostWrite(res: Int) extends PostRepooo
+//case object PostNone extends PostRepooo

@@ -10,8 +10,8 @@ $ ->
             .attr 'class', 'post-body'
             .text pr.post.body )
         .append ( ( $('<div>')
-          .attr 'class', 'post-edit')
-            .append( $('<a>')
-              .attr 'href', '/posts/edit/' + pr.id
-              .text 'Edit' ) )
+            .attr 'class', 'post-edit')
+              .append( $('<a>')
+                .attr 'href', '/posts/edit/' + pr.id
+                .text 'Edit' ) )
 

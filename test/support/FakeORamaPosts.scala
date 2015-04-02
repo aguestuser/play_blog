@@ -1,4 +1,4 @@
-package sample_data
+package support
 
 import models.{PostRepo, Post}
 
@@ -8,7 +8,7 @@ import models.{PostRepo, Post}
  */
 
 
-trait FakePosts {
+trait FakeORamaPosts {
 
   val posts = List(
     Post("first post", "what should i write?"),
