@@ -6,7 +6,7 @@ import models._
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.libs.json._
-import play.api.mvc.{Action, Controller, Request, Result}
+import play.api.mvc.{Action, Controller}
 
 import scala.concurrent.Future
 
@@ -15,6 +15,7 @@ import scala.concurrent.Future
  * Author: @aguestuser
  * Date: 3/21/15
  */
+
 
 object PostController extends Controller with PostJson {
 
@@ -45,26 +46,21 @@ object PostController extends Controller with PostJson {
   //create
   def getCreate = Action { Ok(views.html.posts.getCreate(postForm)) }
 
-  def create = Action(formOrJson) { implicit req ⇒
-    req.body match {
-      case js: JsValue ⇒ createJson(js,req)
-      case _ ⇒ createForm(req) } }
+  def create = Action(parse.urlFormEncoded) { implicit req ⇒
+    postForm.bindFromRequest.fold(
+      formWithErrors ⇒ {
+        BadRequest(views.html.posts.getCreate(formWithErrors))},
+      p ⇒ {
+        PostRepo.create(p)
+        Redirect(routes.PostController.list()).flashing("success" → "Post created") } ) }
 
-  private def createJson(js: JsValue, req: Request[Object]): Result =
-    js.validate[Post].fold(
+  def createJson = Action(parse.json) { implicit req ⇒
+    req.body.validate[Post].fold(
       errors ⇒ {
         BadRequest(Json.obj("status" → "KO", "message" -> JsError.toFlatJson(errors))) },
       p ⇒ {
         val id = PostRepo.create(p).get
-        Ok(Json.obj("status" → "Ok", "message" → s"Post created")) })
-
-  private def createForm(implicit req: Request[Object]): Result =
-    postForm.bindFromRequest.fold(
-        formWithErrors ⇒ {
-          BadRequest(views.html.posts.getCreate(formWithErrors))},
-        p ⇒ {
-          PostRepo.create(p)
-          Redirect(routes.PostController.list()).flashing("success" → "Post created") } )
+        Ok(Json.obj("status" → "Ok", "message" → s"Post created")) }) }
 
   //edit
   def getEdit(id: Long) = Action {
@@ -72,33 +68,30 @@ object PostController extends Controller with PostJson {
       case None ⇒ NotFound.flashing("error" → s"Couldn't find post with id $id")
       case Some(pr) ⇒ Ok(views.html.posts.getEdit(id,postForm.fill(pr.post))) } }
 
-  def edit(id: Long) = Action(formOrJson) { implicit req ⇒
-    req.body match {
-      case js: JsValue ⇒ editJson(id,req,js)
-      case _ ⇒ editForm(id)(req) } }
 
-  private def editJson(id: Long, req: Request[Object], js: JsValue): Result =
-    js.validate[Post].fold(
-      errors ⇒ {
-        BadRequest(Json.obj("status" → "KO", "message" -> JsError.toFlatJson(errors))) },
-      p ⇒ {
-        PostRepo.edit(id,p)
-        Ok(Json.obj("status" → "Ok", "message" → "Post edited")) } )
-
-  private def editForm(id: Long)(implicit req: Request[Object]): Result =
+  def edit(id: Long) = Action(parse.urlFormEncoded){ implicit req ⇒
     postForm.bindFromRequest.fold(
       formWithErrors ⇒ {
         BadRequest(views.html.posts.getEdit(id,formWithErrors)).flashing("error" → "Try again.") },
       p ⇒ {
         PostRepo.edit(id,p)
-        Redirect(routes.PostController.list()).flashing("success" → "Post edited")})
+        Redirect(routes.PostController.list()).flashing("success" → "Post edited")}) }
+
+  def editJson(id: Long) = Action(parse.json){ implicit req ⇒
+    req.body.validate[Post].fold(
+      errors ⇒ {
+        BadRequest(Json.obj("status" → "KO", "message" -> JsError.toFlatJson(errors))) },
+      p ⇒ {
+        PostRepo.edit(id,p)
+        Ok(Json.obj("status" → "Ok", "message" → "Post edited")) } ) }
 
   //delete
-  def delete(id: Long) = Action { implicit request ⇒
+  def delete(id: Long) = Action { implicit req ⇒
     PostRepo.delete(id) match {
       case None ⇒ Redirect(routes.PostController.list()).flashing(
-        "error" → "There was an error deleting the post. Please try again.")
+        "error" → "You tried to delete a post that doesn't exist")
       case Some(_) ⇒ Redirect(routes.PostController.list()).flashing(
-        "success" → "Post deleted.") } }
+        "success" → "Post deleted") } }
+
 
 }
