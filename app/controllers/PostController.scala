@@ -16,7 +16,7 @@ object PostController extends PostController(PostDao)
 
 class PostController(repo: PostRepo) extends Controller {
 
-  def run[A](reader: Reader[PostRepo,A]): A = reader(repo)
+  def run[A](reader: Reader[PostRepo,A]): A = reader(repo) // TODO: Create ADT `PostRepo
 
   //parsers
   val postForm = Form {

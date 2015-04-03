@@ -27,6 +27,7 @@ object Post {
       (JsPath \ "body").write[String]
     )(unlift(Post.unapply))
 
+  // TODO add types to these Readers?
   def find(id: Long) = Reader { (repo: PostRepo) ⇒ repo.find(id) }
   def findAll = Reader { (repo: PostRepo) ⇒ repo.findAll }
   def create(p: Post) = Reader { (repo: PostRepo) ⇒ repo.create(p) }
