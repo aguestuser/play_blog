@@ -2,16 +2,15 @@ package dao
 
 
 import anorm._
-import models.{Post, PostRepo}
+import models.{Post, PostDao, PostResource}
 import org.specs2.execute.AsResult
 import org.specs2.mutable.Specification
 import org.specs2.specification.After
 import play.api.db.DB
-import support.FakeORamaPosts
 import support.posts.WithFakePosts
 
 
-class PostRepo$Test extends Specification with FakeORamaPosts {
+class PostDao$Test extends Specification {
 
   "Post DAO" should {
 
@@ -22,15 +21,15 @@ class PostRepo$Test extends Specification with FakeORamaPosts {
         def after = teardown(ids)
 
         def run = this {
-          PostRepo.find(ids.head) === Some(PostRepo(ids.head, posts.head))
-          PostRepo.find(ids(1)) === Some(PostRepo(ids(1), posts(1)))
-          PostRepo.find(ids(2)) === Some(PostRepo(ids(2), posts(2))) } }
+          PostDao.find(ids.head) === Some(PostResource(ids.head, posts.head))
+          PostDao.find(ids(1)) === Some(PostResource(ids(1), posts(1)))
+          PostDao.find(ids(2)) === Some(PostResource(ids(2), posts(2))) } }
 
       AsResult.effectively(ex().run)
     }
 
     "not find a non-existent post" >> new WithFakePosts {
-      PostRepo.find(666) === None
+      PostDao.find(666) === None
     }
 
     "find all posts" >> new WithFakePosts {
@@ -40,34 +39,34 @@ class PostRepo$Test extends Specification with FakeORamaPosts {
         def after = teardown(ids)
         def run = this {
 
-          PostRepo.findAll === List( // TODO make a contains test?
-            PostRepo(ids.head, posts.head),
-            PostRepo(ids(1), posts(1)),
-            PostRepo(ids(2), posts(2))) } }
+          PostDao.findAll === List( // TODO make a contains test?
+            PostResource(ids.head, posts.head),
+            PostResource(ids(1), posts(1)),
+            PostResource(ids(2), posts(2))) } }
 
       AsResult.effectively(ex().run)
     }
 
     "find no posts if there are none" >> new WithFakePosts {
       DB.withConnection("test"){ implicit c ⇒ SQL"delete from posts".executeUpdate() }
-      PostRepo.findAll === Nil
+      PostDao.findAll === Nil
     }
 
     "create a post" >> new WithFakePosts {
 
       case class ex() extends After {
-        val id = PostRepo.create(Post("second thoughts", "turns out i don't like twitter"))
+        val id = PostDao.create(Post("second thoughts", "turns out i don't like twitter"))
         def after = teardown(List(id.get))
         def run = this {
 
           id must beSome
-          PostRepo.find(id.get) === Some(PostRepo(id.get, Post("second thoughts", "turns out i don't like twitter"))) } }
+          PostDao.find(id.get) === Some(PostResource(id.get, Post("second thoughts", "turns out i don't like twitter"))) } }
 
       AsResult.effectively(ex().run)
     }
 
     "not create an improperly formatted post" >> new WithFakePosts {
-      PostRepo.create(Post("t","b")) === None
+      PostDao.create(Post("t","b")) === None
     }
 
     "edit a post" >> new WithFakePosts {
@@ -77,8 +76,8 @@ class PostRepo$Test extends Specification with FakeORamaPosts {
         def after = teardown(ids)
         def run = this {
 
-          PostRepo.edit(ids.head, Post("changed my mind", "I Think I'll Try Capital Letters.")) === Some(1)
-          PostRepo.find(ids.head) === Some(PostRepo(ids.head,Post("changed my mind", "I Think I'll Try Capital Letters."))) } }
+          PostDao.edit(ids.head, Post("changed my mind", "I Think I'll Try Capital Letters.")) === Some(1)
+          PostDao.find(ids.head) === Some(PostResource(ids.head,Post("changed my mind", "I Think I'll Try Capital Letters."))) } }
 
      AsResult.effectively(ex().run)
     }
@@ -90,14 +89,14 @@ class PostRepo$Test extends Specification with FakeORamaPosts {
         def after = teardown(ids)
         def run = this {
 
-          PostRepo.edit(ids.head, Post("a","b")) === None
-          PostRepo.find(ids.head) === Some(PostRepo(ids.head, posts.head)) } }
+          PostDao.edit(ids.head, Post("a","b")) === None
+          PostDao.find(ids.head) === Some(PostResource(ids.head, posts.head)) } }
 
       AsResult.effectively(ex().run)
     }
 
     "not edit a post that doesn't exist" >> new WithFakePosts {
-      PostRepo.edit(666, Post("oh hai!", "this probably wont' get written")) === None
+      PostDao.edit(666, Post("oh hai!", "this probably wont' get written")) === None
     }
 
     "delete a post" >> new WithFakePosts {
@@ -107,14 +106,14 @@ class PostRepo$Test extends Specification with FakeORamaPosts {
         def after = teardown(ids)
         def run = this {
 
-          PostRepo.delete(ids.head) === Some(1)
-          PostRepo.find(ids.head) === None } }
+          PostDao.delete(ids.head) === Some(1)
+          PostDao.find(ids.head) === None } }
 
       AsResult.effectively(ex().run)
     }
 
     "not delete a post that does't exist" >> new WithFakePosts {
-      PostRepo.delete(666) === None
+      PostDao.delete(666) === None
     }
   }
 }

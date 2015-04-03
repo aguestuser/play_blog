@@ -14,14 +14,7 @@ import play.api.test.WithApplication
 */
 
 
-trait WithFakePosts extends WithApplication with Scope {
-
-  lazy val post = Post("first post", "what should i write?")
-
-  lazy val posts = List(
-    Post("first post", "what should i write?"),
-    Post("second post", "i'm getting the hang of this"),
-    Post("last post", "i think i'll try twitter"))
+trait WithFakePosts extends WithApplication with SamplePosts with Scope {
 
   val count = { get[Int]("count") }
   val id = { get[Long]("id") }
