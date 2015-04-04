@@ -10,13 +10,11 @@ import org.specs2.mutable.Specification
 
 class PostBrowser$Test extends Specification {
 
-  "Application" should {
+  "Browser" should {
 
-    "get tests written for it later" >> pending {
-      1 === 1
-    }
+    "get tests written for it later" >> pending { true === true }
 
-//    "work from within a browser" in new WithBrowser {
+    //    "work from within a browser" in new WithBrowser {
 //
 //      browser.goTo("http://localhost:" + port)
 //

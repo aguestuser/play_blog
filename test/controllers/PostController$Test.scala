@@ -4,10 +4,11 @@ import controllers.PostController.edit
 import models.Post
 import org.specs2.mock._
 import org.specs2.mutable._
-import play.api.libs.json.{JsArray, JsNumber, Json}
+import play.api.libs.json.{JsNull, JsArray, JsNumber, Json}
 import play.api.test.Helpers._
 import play.api.test._
-import repo.{PostResource, PostRepo}
+import repos.{PostResource, PostRepo}
+import PostRepo._
 import support.posts.{PostControllerExpectedValues, SamplePosts}
 
 
@@ -65,7 +66,7 @@ class PostController$Test extends Specification with SamplePosts with PostContro
 
       status(res) === OK
       contentType(res) must beSome.which(_ == "application/json")
-      contentAsJson(res) === Json.obj()
+      contentAsJson(res) === JsNull
     }
 
     "render a page that shows all posts" >> {
@@ -103,7 +104,7 @@ class PostController$Test extends Specification with SamplePosts with PostContro
 
       status(res) === SEE_OTHER
       headers(res) === Map(
-        "Location" → "/posts",
+        "Location" → "/",
         "Set-Cookie" → "PLAY_FLASH=\"success=Post+created\"; Path=/; HTTPOnly")
 
     }
@@ -247,7 +248,7 @@ class PostController$Test extends Specification with SamplePosts with PostContro
 
       status(res) === SEE_OTHER
       headers(res) === Map(
-        "Location" → "/posts",
+        "Location" → "/",
         "Set-Cookie" → "PLAY_FLASH=\"success=Post+edited\"; Path=/; HTTPOnly")
     }
 
@@ -283,7 +284,7 @@ class PostController$Test extends Specification with SamplePosts with PostContro
 
       status(res) === SEE_OTHER
       headers(res) === Map(
-        "Location" → "/posts",
+        "Location" → "/",
         "Set-Cookie" → "PLAY_FLASH=\"success=Post+deleted\"; Path=/; HTTPOnly")
     }
 
@@ -293,7 +294,7 @@ class PostController$Test extends Specification with SamplePosts with PostContro
 
       status(res) === SEE_OTHER
       headers(res) === Map(
-        "Location" → "/posts",
+        "Location" → "/",
         "Set-Cookie" → "PLAY_FLASH=\"error=You+tried+to+delete+a+post+that+doesn%27t+exist\"; Path=/; HTTPOnly")
     }
   }

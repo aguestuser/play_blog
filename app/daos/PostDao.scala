@@ -1,29 +1,35 @@
-package repo.dao
+package daos
 
-import anorm.SqlParser.{get ⇒ parse}
+import anorm.SqlParser.get
 import anorm._
 import models.Post
-import repo.{PostRepo, PostResource}
+import repos.{PostRepo, PostResource}
 
 /**
  * Author: @aguestuser
  * Date: 3/25/15
  */
 
-object PostDao extends Dao[Post,PostResource] with PostRepo {
+object PostDao extends Dao[Post,PostResource] with PostRepo with DbName {
 
-  val table_name = "posts"
-
-  val sql_row = {
-    parse[Long]("id") ~ parse[String]("title") ~ parse[String]("body") map {
+  val parse: RowParser[PostResource] = {
+    get[Long]("id") ~ get[String]("title") ~ get[String]("body") map {
       case id ~ t ~ b ⇒
         PostResource(id,Post(t,b)) } }
+
+  def findStatement(id: Long) =
+    SQL"select * from posts where id = $id"
+
+  def findAllStatement = SQL"select * from posts"
 
   def createStatement(p: Post) =
     SQL"insert into posts (title,body) values (${p.title},${p.body})"
 
   def editStatement(id: Long, p: Post) =
     SQL"update posts set title = ${p.title}, body = ${p.body} where id = $id"
+
+  def deleteStatement(id: Long) =
+    SQL"delete from posts where id = $id"
 
   def validate(p: Post): Option[Post] = {
     val conditions = List(

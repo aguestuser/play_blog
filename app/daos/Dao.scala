@@ -1,7 +1,10 @@
-package repo.dao
-import repo.{Repo, RepoResource}
+package daos
+
+import repos.{Repo, RepoResource}
 import anorm._
+import play.api.Play.current
 import play.api.db.DB
+
 
 /**
  * Author: @aguestuser
@@ -10,27 +13,30 @@ import play.api.db.DB
 
 trait Dao[T,R<:RepoResource[T]] extends Repo[T,R] with DbName {
 
-  def validate(item: T): Option[T]
+  val parse: RowParser[R]
 
-  val table_name: String
-  val sql_row: RowParser[R]
+  def validate(item: T): Option[T]
+  def findStatement(id: Long): SimpleSql[Row]
+  def findAllStatement: SimpleSql[Row]
   def createStatement(item: T): SimpleSql[Row]
   def editStatement(id: Long, item: T): SimpleSql[Row]
+  def deleteStatement(id: Long): SimpleSql[Row]
 
   def find(id: Long): Option[R] =
     DB.withConnection(dbName) { implicit c ⇒
-      SQL"select * from $table_name where id = $id"
-        .as(sql_row.singleOpt) }
+      findStatement(id)
+        .as(parse.singleOpt) }
 
   def findAll: List[R] = {
     DB.withConnection(dbName) { implicit c ⇒
-      SQL"select * from $table_name"
-        .as(sql_row.*) } }
+      findAllStatement
+        .as(parse.*) } }
 
   def create(item: T): Option[Long] =
     validate(item) flatMap { i ⇒
-      createStatement(item)
-        .executeInsert() }
+      DB.withConnection(dbName) { implicit c ⇒
+        createStatement(item)
+          .executeInsert() } }
 
   def edit(id: Long, item: T): Option[Int] =
     validate(item) flatMap { i ⇒
@@ -40,7 +46,7 @@ trait Dao[T,R<:RepoResource[T]] extends Repo[T,R] with DbName {
 
   def delete(id: Long): Option[Int] =
     optionify { DB.withConnection(dbName) { implicit c =>
-      SQL"delete from $table_name where id = $id"
+      deleteStatement(id)
         .executeUpdate() } }
 
   private def optionify(i: Int): Option[Int] = i match {

@@ -1,7 +1,7 @@
 package support.posts
 
 import models.Post
-import repo.PostResource
+import repos.PostResource
 
 /**
  * Author: @aguestuser

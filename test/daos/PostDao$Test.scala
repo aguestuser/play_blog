@@ -1,4 +1,4 @@
-package dao
+package daos
 
 
 import anorm._
@@ -7,8 +7,7 @@ import org.specs2.execute.AsResult
 import org.specs2.mutable.Specification
 import org.specs2.specification.After
 import play.api.db.DB
-import repo.PostResource
-import repo.dao.PostDao
+import repos.PostResource
 import support.posts.WithFakePosts
 
 
@@ -31,7 +30,7 @@ class PostDao$Test extends Specification {
     }
 
     "not find a non-existent post" >> new WithFakePosts {
-      PostDao.find(666) === None
+      PostDao.find(0) === None
     }
 
     "find all posts" >> new WithFakePosts {
@@ -98,7 +97,7 @@ class PostDao$Test extends Specification {
     }
 
     "not edit a post that doesn't exist" >> new WithFakePosts {
-      PostDao.edit(666, Post("oh hai!", "this probably wont' get written")) === None
+      PostDao.edit(0, Post("oh hai!", "this probably wont' get written")) === None
     }
 
     "delete a post" >> new WithFakePosts {
@@ -115,7 +114,7 @@ class PostDao$Test extends Specification {
     }
 
     "not delete a post that does't exist" >> new WithFakePosts {
-      PostDao.delete(666) === None
+      PostDao.delete(0) === None
     }
   }
 }

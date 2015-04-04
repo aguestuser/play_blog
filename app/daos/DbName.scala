@@ -1,4 +1,4 @@
-package repo.dao
+package daos
 
 import play.api.{Mode, Play}
 

@@ -1,4 +1,4 @@
-package repo
+package repos
 
 import anorm.SqlParser.{get ⇒ parse}
 import models.Post
@@ -11,13 +11,12 @@ import play.api.libs.json.{Format, JsPath}
  */
 
 
-trait PostRepo extends Repo[Post,PostResource] {
+trait PostRepo extends Repo[Post,PostResource]
+case class PostResource(id: Long, post: Post) extends RepoResource[Post]
 
-  implicit val json: Format[PostResource] = (
+object PostRepo {
+  implicit val formatPostRepo: Format[PostResource] = (
     (JsPath \ "id").format[Long] and
     (JsPath \ "post").format[Post]
   )(PostResource.apply, unlift(PostResource.unapply))
-
 }
-
-case class PostResource(id: Long, post: Post) extends RepoResource[Post]
