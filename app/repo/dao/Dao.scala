@@ -1,8 +1,7 @@
 package repo.dao
-
+import repo.{Repo, RepoResource}
 import anorm._
 import play.api.db.DB
-import repo.{Repo, RepoResource}
 
 /**
  * Author: @aguestuser
@@ -15,8 +14,8 @@ trait Dao[T,R<:RepoResource[T]] extends Repo[T,R] with DbName {
 
   val table_name: String
   val sql_row: RowParser[R]
-  val create_statement: SimpleSql[Row]
-  val edit_statement: SimpleSql[Row]
+  def createStatement(item: T): SimpleSql[Row]
+  def editStatement(id: Long, item: T): SimpleSql[Row]
 
   def find(id: Long): Option[R] =
     DB.withConnection(dbName) { implicit c ⇒
@@ -29,12 +28,15 @@ trait Dao[T,R<:RepoResource[T]] extends Repo[T,R] with DbName {
         .as(sql_row.*) } }
 
   def create(item: T): Option[Long] =
-    validate(item) flatMap { i ⇒ create_statement.executeInsert() }
+    validate(item) flatMap { i ⇒
+      createStatement(item)
+        .executeInsert() }
 
   def edit(id: Long, item: T): Option[Int] =
     validate(item) flatMap { i ⇒
       optionify { DB.withConnection(dbName) { implicit c ⇒
-        edit_statement.executeUpdate() } } }
+        editStatement(id,item)
+          .executeUpdate() } } }
 
   def delete(id: Long): Option[Int] =
     optionify { DB.withConnection(dbName) { implicit c =>

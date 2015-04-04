@@ -1,6 +1,7 @@
 package repo.dao
 
-
+import anorm.SqlParser.{get ⇒ parse}
+import anorm._
 import models.Post
 import repo.{PostRepo, PostResource}
 
@@ -9,44 +10,25 @@ import repo.{PostRepo, PostResource}
  * Date: 3/25/15
  */
 
-object PostDao extends PostRepo with DbName {
+object PostDao extends Dao[Post,PostResource] with PostRepo {
 
-  import anorm._
-  import play.api.Play.current
-  import play.api.db.DB
+  val table_name = "posts"
 
-  def find(id: Long): Option[PostResource] =
-    DB.withConnection(dbName) { implicit c =>
-      SQL"select * from posts where id = $id"
-        .as(sql_row *) match {
-        case Nil ⇒ None
-        case prr ⇒ Some(prr.head) } }
+  val sql_row = {
+    parse[Long]("id") ~ parse[String]("title") ~ parse[String]("body") map {
+      case id ~ t ~ b ⇒
+        PostResource(id,Post(t,b)) } }
 
-  def findAll: List[PostResource] =
-    DB.withConnection(dbName) { implicit c ⇒
-      SQL"select * from posts"
-        .as(sql_row *) } // TODO add "order by created asc"
+  def createStatement(p: Post) =
+    SQL"insert into posts (title,body) values (${p.title},${p.body})"
 
-  def create(p: Post): Option[Long] =
-    validate(p) flatMap { p ⇒
-      DB.withConnection(dbName) { implicit c =>
-        SQL"insert into posts (title,body) values (${p.title},${p.body})"
-          .executeInsert() } }
+  def editStatement(id: Long, p: Post) =
+    SQL"update posts set title = ${p.title}, body = ${p.body} where id = $id"
 
-  def edit(id: Long, p: Post): Option[Int] =
-    validate(p) flatMap { p ⇒
-      optionify { DB.withConnection(dbName) { implicit c =>
-        SQL"""update posts set title = ${p.title}, body = ${p.body} where id = $id"""
-          .executeUpdate() } } }
-
-  def delete(id: Long): Option[Int] =
-    optionify { DB.withConnection(dbName) { implicit c =>
-      SQL"delete from posts where id = $id"
-        .executeUpdate() } }
-
-  private def optionify(i: Int): Option[Int] = i match {
-    case 0 ⇒ None
-    case _ ⇒ Some(1)
-  }
+  def validate(p: Post): Option[Post] = {
+    val conditions = List(
+      p.title.length > 2,
+      p.body.length > 2 )
+    if ((true /: conditions)(_ && _)) Some(p) else None }
 
 }
