@@ -27,6 +27,10 @@ $ ->
             .attr 'href', '/posts/edit/' + repo.id
             .text 'Edit' ) )
 
+        .append ( $('<div>').attr 'class', 'list-posts'
+          .append( $('<a>')
+            .attr 'href', '/'
+            .text 'All Posts' ) )
 
 
 

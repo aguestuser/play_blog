@@ -2,14 +2,16 @@ package controllers
 
 import daos.PostDao
 import models._
+import play.api.{Mode, Play}
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.mvc.{Action, Controller}
-import repos.{PostResource, PostRepo}
+import repos.{Repo, PostResource, PostRepo}
 import PostRepo._
 import scalaz.Reader
+import com.github.nscala_time.time.Imports._
 
 /**
  * Author: @aguestuser
@@ -31,11 +33,11 @@ class PostController(repo: PostRepo) extends Controller {
     )(Post.apply)(Post.unapply) }
 
   //show
-  def show(id: Long) = Action { Ok(views.html.posts.show("Post", id)) }
+  def show(id: Long) = Action { Ok(views.html.posts.show("Silly Blog", id)) }
   def getOne(id: Long) = Action { Ok(runJson(Post.find(id))) }
 
   //list
-  def list = Action { Ok(views.html.posts.list("Posts")) }
+  def list = Action { Ok(views.html.posts.list("Silly Blog")) }
   def getAll = Action { Ok(runJson(Post.findAll)) }
 
   //create

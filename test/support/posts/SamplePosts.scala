@@ -3,12 +3,15 @@ package support.posts
 import models.Post
 import repos.PostResource
 
+
 /**
  * Author: @aguestuser
  * Date: 4/3/15
  */
 
 trait SamplePosts {
+
+  import env.Environment.s17
 
   lazy val post = Post("first post", "what should i write?")
 
@@ -18,7 +21,7 @@ trait SamplePosts {
     Post("last post", "i think i'll try twitter"))
 
   lazy val postResources = List(
-    PostResource(1,Post("first post", "what should i write?")),
-    PostResource(2,Post("second post", "i'm getting the hang of this")),
-    PostResource(3,Post("last post", "i think i'll try twitter")))
+    PostResource(1,s17,s17,Post("first post", "what should i write?")),
+    PostResource(2,s17,s17,Post("second post", "i'm getting the hang of this")),
+    PostResource(3,s17,s17,Post("last post", "i think i'll try twitter")))
 }

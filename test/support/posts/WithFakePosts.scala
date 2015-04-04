@@ -2,6 +2,7 @@ package support.posts
 
 import anorm.SqlParser._
 import anorm._
+import env.Environment
 import models.Post
 import org.specs2.specification.Scope
 import play.api.db.DB
@@ -17,17 +18,19 @@ import play.api.test.WithApplication
 trait WithFakePosts extends WithApplication with SamplePosts with Scope {
 
   val count = { get[Int]("count") }
-  val id = { get[Long]("id") }
+  val idd = { get[Long]("id") }
+  lazy val now = Environment.s17
+  val hmm = "hmmm"
 
   lazy val last: List[Long] =
     DB.withConnection("test") { implicit c ⇒
       SQL"select id from posts order by id desc limit 1"
-        .as(id *) }
+        .as(idd *) }
 
   def setup(ps: List[Post]): List[Long] = {
     val res:List[Option[Long]] = DB.withConnection("test") { implicit c ⇒
       ps map { p ⇒
-        SQL"insert into posts (title, body) values(${p.title}, ${p.body})"
+        SQL"insert into posts (title, body, created, modified) values(${p.title}, ${p.body}, $now, $now)"
           .executeInsert() } }
     res.map(_.get) }
 

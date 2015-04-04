@@ -1,14 +1,15 @@
 package controllers
 
 import controllers.PostController.edit
+import env.Environment.s17
 import models.Post
 import org.specs2.mock._
 import org.specs2.mutable._
-import play.api.libs.json.{JsNull, JsArray, JsNumber, Json}
+import play.api.libs.json.{JsArray, JsNull, JsNumber, Json}
 import play.api.test.Helpers._
 import play.api.test._
-import repos.{PostResource, PostRepo}
-import PostRepo._
+import repos.PostRepo._
+import repos.{PostRepo, PostResource}
 import support.posts.{PostControllerExpectedValues, SamplePosts}
 
 
@@ -22,8 +23,8 @@ class PostController$Test extends Specification with SamplePosts with PostContro
   val fakeRepo = mock[PostRepo]
 
   fakeRepo.find(0) returns None
-  fakeRepo.find(1) returns Some(PostResource(1,post))
-  fakeRepo.findAll returns { (1 to 3).toList map { n ⇒ PostResource(n,posts(n - 1)) } }
+  fakeRepo.find(1) returns Some(PostResource(1,s17,s17,post))
+  fakeRepo.findAll returns { (1 to 3).toList map { n ⇒ PostResource(n,s17,s17,posts(n - 1)) } }
 
   fakeRepo.create(post) returns Some(1L)
   fakeRepo.create(Post("title", "b")) returns None
@@ -57,7 +58,7 @@ class PostController$Test extends Specification with SamplePosts with PostContro
 
       status(res) === OK
       contentType(res) must beSome.which(_ == "application/json")
-      contentAsJson(res) === Json.toJson(PostResource(1,post))
+      contentAsJson(res) === Json.toJson(PostResource(1,s17,s17,post))
     }
 
     "not retrieve a non-existent post" >> {

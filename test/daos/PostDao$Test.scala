@@ -2,6 +2,7 @@ package daos
 
 
 import anorm._
+import env.Environment.s17
 import models.Post
 import org.specs2.execute.AsResult
 import org.specs2.mutable.Specification
@@ -22,9 +23,9 @@ class PostDao$Test extends Specification {
         def after = teardown(ids)
 
         def run = this {
-          PostDao.find(ids.head) === Some(PostResource(ids.head, posts.head))
-          PostDao.find(ids(1)) === Some(PostResource(ids(1), posts(1)))
-          PostDao.find(ids(2)) === Some(PostResource(ids(2), posts(2))) } }
+          PostDao.find(ids.head) === Some(PostResource(ids.head,now,now,posts.head))
+          PostDao.find(ids(1)) === Some(PostResource(ids(1),now,now,posts(1)))
+          PostDao.find(ids(2)) === Some(PostResource(ids(2),now,now,posts(2))) } }
 
       AsResult.effectively(ex().run)
     }
@@ -41,9 +42,9 @@ class PostDao$Test extends Specification {
         def run = this {
 
           PostDao.findAll === List( // TODO make a contains test?
-            PostResource(ids.head, posts.head),
-            PostResource(ids(1), posts(1)),
-            PostResource(ids(2), posts(2))) } }
+            PostResource(ids.head, s17, s17, posts.head),
+            PostResource(ids(1), s17, s17, posts(1)),
+            PostResource(ids(2), s17, s17, posts(2))) } }
 
       AsResult.effectively(ex().run)
     }
@@ -61,7 +62,7 @@ class PostDao$Test extends Specification {
         def run = this {
 
           id must beSome
-          PostDao.find(id.get) === Some(PostResource(id.get, Post("second thoughts", "turns out i don't like twitter"))) } }
+          PostDao.find(id.get) === Some(PostResource(id.get, s17, s17, Post("second thoughts", "turns out i don't like twitter"))) } }
 
       AsResult.effectively(ex().run)
     }
@@ -78,7 +79,7 @@ class PostDao$Test extends Specification {
         def run = this {
 
           PostDao.edit(ids.head, Post("changed my mind", "I Think I'll Try Capital Letters.")) === Some(1)
-          PostDao.find(ids.head) === Some(PostResource(ids.head,Post("changed my mind", "I Think I'll Try Capital Letters."))) } }
+          PostDao.find(ids.head) === Some(PostResource(ids.head, s17, s17, Post("changed my mind", "I Think I'll Try Capital Letters."))) } }
 
      AsResult.effectively(ex().run)
     }
@@ -91,7 +92,7 @@ class PostDao$Test extends Specification {
         def run = this {
 
           PostDao.edit(ids.head, Post("a","b")) === None
-          PostDao.find(ids.head) === Some(PostResource(ids.head, posts.head)) } }
+          PostDao.find(ids.head) === Some(PostResource(ids.head, s17, s17, posts.head)) } }
 
       AsResult.effectively(ex().run)
     }
