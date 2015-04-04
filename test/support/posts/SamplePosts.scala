@@ -1,6 +1,7 @@
 package support.posts
 
-import models.{PostResource, Post}
+import models.Post
+import repo.PostResource
 
 /**
  * Author: @aguestuser

@@ -2,11 +2,13 @@ package dao
 
 
 import anorm._
-import models.{Post, PostDao, PostResource}
+import models.Post
 import org.specs2.execute.AsResult
 import org.specs2.mutable.Specification
 import org.specs2.specification.After
 import play.api.db.DB
+import repo.PostResource
+import repo.dao.PostDao
 import support.posts.WithFakePosts
 
 

@@ -1,12 +1,13 @@
 package controllers
 
 import controllers.PostController.edit
-import models.{Post, PostRepo, PostResource}
+import models.Post
 import org.specs2.mock._
 import org.specs2.mutable._
 import play.api.libs.json.{JsArray, JsNumber, Json}
 import play.api.test.Helpers._
 import play.api.test._
+import repo.{PostResource, PostRepo}
 import support.posts.{PostControllerExpectedValues, SamplePosts}
 
 

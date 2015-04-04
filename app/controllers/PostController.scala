@@ -5,6 +5,8 @@ import play.api.data.Form
 import play.api.data.Forms._
 import play.api.libs.json._
 import play.api.mvc.{Action, Controller}
+import repo.PostRepo
+import repo.dao.PostDao
 import scalaz.Reader
 
 /**
@@ -16,7 +18,8 @@ object PostController extends PostController(PostDao)
 
 class PostController(repo: PostRepo) extends Controller {
 
-  def run[A](reader: Reader[PostRepo,A]): A = reader(repo) // TODO: Create ADT `PostRepo
+  def run[A](reader: Reader[PostRepo,A]): A = reader(repo)
+  def runJson[A:Writes](reader: Reader[PostRepo,A]): JsValue = { Json.toJson(reader(repo)) }
 
   //parsers
   val postForm = Form {
@@ -34,7 +37,10 @@ class PostController(repo: PostRepo) extends Controller {
 
   //list
   def list = Action { Ok(views.html.posts.list("Posts")) }
-  def getAll = Action { Ok(Json.toJson(Post.findAll(repo))) }
+//  def getAll = Action { Ok(Json.toJson(Post.findAll(repo))) }
+  def getAll = Action { Ok(
+    runJson(Post.findAll)) }
+
 
   //create
   def getCreate = Action { Ok(views.html.posts.getCreate(postForm)) }
@@ -44,7 +50,7 @@ class PostController(repo: PostRepo) extends Controller {
       formWithErrors ⇒ {
         BadRequest(views.html.posts.getCreate(formWithErrors))},
       p ⇒ {
-        Post.create(p)(repo)
+        run(Post.create(p))
         Redirect(routes.PostController.list()).flashing("success" → "Post created") } ) }
 
   def createJson = Action(parse.json) { implicit req ⇒

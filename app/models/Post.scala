@@ -4,6 +4,7 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json._
 import com.ning.http.util.UTF8UrlEncoder.encode
+import repo.PostRepo
 
 /**
  * Author: @aguestuser
@@ -33,15 +34,6 @@ object Post {
   def create(p: Post) = Reader { (repo: PostRepo) ⇒ repo.create(p) }
   def edit(id: Long, edits: Post) = Reader { (repo: PostRepo) ⇒ repo.edit(id,edits) }
   def delete(id: Long) = Reader { (repo: PostRepo) ⇒ repo.delete(id) }
-
-
-  def validate(p: Post): Option[Post] = {
-    val conditions = List(
-      p.title.length > 2,
-      p.body.length > 2
-    )
-    if ((true /: conditions)(_ && _)) Some(p) else None
-  }
 
   def queryString(p: Post): String = s"?title=${encode(p.title)}&body=${encode(p.body)}"
 
