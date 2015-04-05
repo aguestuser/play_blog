@@ -10,7 +10,7 @@ $ ->
           .attr 'class', 'post-created' )
             .append( $('<a>')
               .attr 'href', '/posts/'+pr.id
-              .text new Date(pr.created) ) )
+              .text pr.created ) )
         .append ( ($('<div>')
           .attr 'class', 'post-body')
             .append $('<p>').text pr.post.body )
@@ -18,5 +18,6 @@ $ ->
             .attr 'class', 'post-edit')
               .append( $('<a>')
                 .attr 'href', '/posts/edit/' + pr.id
+                .attr 'class', 'edit-post'
                 .text 'Edit' ) )
 

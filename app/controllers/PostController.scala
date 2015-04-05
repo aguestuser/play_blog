@@ -23,13 +23,13 @@ object PostController extends PostController(PostDao)
 class PostController(repo: PostRepo) extends Controller {
 
   def run[A](reader: Reader[PostRepo,A]): A = reader(repo)
-  def runJson[A:Format](reader: Reader[PostRepo,A]): JsValue = { Json.toJson(reader(repo)) }
+  def runJson[A:Writes](reader: Reader[PostRepo,A]): JsValue = { Json.toJson(reader(repo)) }
 
   //parsers
   val postForm = Form {
     mapping(
-      "title" → text(minLength = 2),
-      "body" → text(minLength = 2)
+      "Title" → text(minLength = 2),
+      "Body" → text(minLength = 2)
     )(Post.apply)(Post.unapply) }
 
   //show
@@ -41,12 +41,12 @@ class PostController(repo: PostRepo) extends Controller {
   def getAll = Action { Ok(runJson(Post.findAll)) }
 
   //create
-  def getCreate = Action { Ok(views.html.posts.getCreate(postForm)) }
+  def getCreate = Action { Ok(views.html.posts.getCreate("Write Post", postForm)) }
 
   def create = Action(parse.urlFormEncoded) { implicit req ⇒
     postForm.bindFromRequest.fold(
       formWithErrors ⇒ {
-        BadRequest(views.html.posts.getCreate(formWithErrors))},
+        BadRequest(views.html.posts.getCreate("Write Post", formWithErrors))},
       p ⇒ {
         run(Post.create(p))
         Redirect(routes.PostController.list()).flashing("success" → "Post created") } ) }
@@ -61,15 +61,15 @@ class PostController(repo: PostRepo) extends Controller {
 
   //edit
   def getEdit(id: Long) = Action {
-    Post.find(id)(repo) match {
+    run(Post.find(id)) match {
       case None ⇒ NotFound.flashing("error" → s"Couldn't find post with id $id")
-      case Some(pr) ⇒ Ok(views.html.posts.getEdit(id,postForm.fill(pr.post))) } }
+      case Some(pr) ⇒ Ok(views.html.posts.getEdit("Edit Post", id, postForm.fill(pr.post))) } }
 
 
   def edit(id: Long) = Action(parse.urlFormEncoded){ implicit req ⇒
     postForm.bindFromRequest.fold(
       formWithErrors ⇒ {
-        BadRequest(views.html.posts.getEdit(id,formWithErrors)).flashing("error" → "Try again.") },
+        BadRequest(views.html.posts.getEdit("Edit Post", id,formWithErrors)).flashing("error" → "Try again.") },
       p ⇒ {
         run(Post.edit(id,p))
         Redirect(routes.PostController.list()).flashing("success" → "Post edited")}) }

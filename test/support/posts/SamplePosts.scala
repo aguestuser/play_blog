@@ -2,6 +2,7 @@ package support.posts
 
 import models.Post
 import repos.PostResource
+import util.Environment
 
 
 /**
@@ -11,7 +12,7 @@ import repos.PostResource
 
 trait SamplePosts {
 
-  import env.Environment.s17
+  import Environment.s17
 
   lazy val post = Post("first post", "what should i write?")
 

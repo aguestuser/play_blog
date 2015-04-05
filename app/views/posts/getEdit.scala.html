@@ -1,18 +1,23 @@
-@(id: Long, postForm: Form[Post])
-
+@(title: String, id: Long, postForm: Form[Post])
 @import helper.{form,inputText,textarea}
 
-<h1>Edit Post</h1>
-@if(postForm.hasGlobalErrors) {
-    <ul>
-    @for(error <- postForm.globalErrors) {
-        <li>@error.message</li>
+@main(title) {
+
+    <h1>Edit Post</h1>
+
+    @if(postForm.hasGlobalErrors) {
+        <ul>
+        @for(error <- postForm.globalErrors) {
+            <li>@error.message</li>
+        }
+        </ul>
     }
-    </ul>
+
+    @form(action = routes.PostController.edit(id)) {
+        @inputText(postForm("Title"))
+        @textarea(postForm("Body"))
+        <input type="submit" value="Save">
+    }
 }
 
-@form(action = routes.PostController.edit(id)) {
-    @inputText(postForm("title"))
-    @textarea(postForm("body"))
-    <input type="submit" value="Save">
-}
+

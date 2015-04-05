@@ -22,15 +22,21 @@ $ ->
         .append ( $('<div>').attr 'class', 'post-body'
           .append( $('<p>').text repo.post.body ) )
 
-        .append ( $('<div>').attr 'class', 'post-edit'
-          .append( $('<a>')
-            .attr 'href', '/posts/edit/' + repo.id
-            .text 'Edit' ) )
+        .append( $('<div>')
+          .attr 'class', 'post-meta'
+          .text 'Created: ' + repo.created + ' | Last edited: ' + repo.modified )
 
-        .append ( $('<div>').attr 'class', 'list-posts'
-          .append( $('<a>')
-            .attr 'href', '/'
-            .text 'All Posts' ) )
+        .append( $('<a>')
+            .attr 'class', 'edit-post'
+            .attr 'href', '/posts/edit/' + repo.id
+            .text 'Edit' )
+
+        .append($('<p>'))
+
+        .append( $('<a>')
+          .attr 'href', '/'
+          .attr 'class', 'home'
+          .text 'Home' )
 
 
 

@@ -6,19 +6,24 @@
 
     <script src="@routes.Assets.at("javascripts/posts/list.js")" type="text/javascript"></script>
 
-    <h1>@title</h1>
+    <div class="row">
+        <div class="col-md-8-offset-8 col-xs-12">
 
-    <div id="#newpost">
-        <a href="@routes.PostController.getCreate()">Create Post</a>
+            <h1>@title</h1>
+
+            <a href="@routes.PostController.getCreate()" class="create-post">Write</a>
+
+            <div id="posts">
+            </div>
+
+            <p> <a href="@routes.PostController.getCreate()" class="create-post">Write</a> </p>
+        </div>
     </div>
 
 
-    <div id="posts">
-    </div>
 
-    <div id="#newpost">
-        <p>
-            <a href="@routes.PostController.getCreate()">Create Post</a>
-        </p>
-    </div>
+
+
+
+
 }

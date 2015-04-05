@@ -17,12 +17,12 @@ case class Post(title: String, body: String)
 
 object Post {
 
-  implicit val postReads: Reads[Post] = (
+  implicit val readsPost: Reads[Post] = (
     (JsPath \ "title").read[String](minLength[String](2)) and
       (JsPath \ "body").read[String](minLength[String](2))
     )(Post.apply _)
 
-  implicit val postWrites: Writes[Post] = (
+  implicit val writesPost: Writes[Post] = (
     (JsPath \ "title").write[String] and
       (JsPath \ "body").write[String]
     )(unlift(Post.unapply))

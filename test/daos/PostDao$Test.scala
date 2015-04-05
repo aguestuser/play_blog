@@ -2,7 +2,8 @@ package daos
 
 
 import anorm._
-import env.Environment.s17
+import util.Environment
+import Environment.s17
 import models.Post
 import org.specs2.execute.AsResult
 import org.specs2.mutable.Specification

@@ -5,7 +5,7 @@ import anorm._
 import models.Post
 import org.joda.time.DateTime
 import repos.{PostRepo, PostResource}
-import env.Environment
+import util.Environment
 
 /**
  * Author: @aguestuser

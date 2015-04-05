@@ -2,11 +2,11 @@ package support.posts
 
 import anorm.SqlParser._
 import anorm._
-import env.Environment
 import models.Post
 import org.specs2.specification.Scope
 import play.api.db.DB
 import play.api.test.WithApplication
+import util.Environment
 
 
 /**

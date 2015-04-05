@@ -1,7 +1,8 @@
 package controllers
 
 import controllers.PostController.edit
-import env.Environment.s17
+import util.Environment
+import Environment.s17
 import models.Post
 import org.specs2.mock._
 import org.specs2.mutable._

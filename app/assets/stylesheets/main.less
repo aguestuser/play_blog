@@ -1,0 +1,97 @@
+@import "lib/bootstrap/less/bootstrap.less";
+
+/* universal */
+
+//html {
+//  overflow-y: scroll;
+//}
+//
+//body {
+//  padding-top: 60px;
+//}
+//
+//section {
+//  overflow: auto;
+//}
+//
+//textarea {
+//  resize: vertical;
+//}
+//
+//.center {
+//  text-align: center;
+//  h1 {
+//    margin-bottom: 10px;
+//  }
+//}
+
+/* typography */
+
+//h1, h2, h3, h4, h5, h6 {
+//  line-height: 1;
+//}
+//
+//h1 {
+//  font-size: 3em;
+//  letter-spacing: -2px;
+//  margin-bottom: 30px;
+//}
+//
+//p {
+//  font-size: 1.1em;
+//  line-height: 1.7em;
+//}
+
+#posts {
+  margin-bottom: 3em;
+}
+
+.post-body {
+  border-left: solid lightgray 1px;
+//  border-radius: .4em;
+  padding: .5em;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+.post-meta {
+  color: lightgray;
+  font-style: italic;
+  font-size: small;
+  margin-bottom: 1.5em;
+}
+
+input[type="text"] {
+  width: 20em;
+}
+
+textarea {
+  width: 80%;
+  height: 10em;
+}
+
+.edit-post {
+  &:extend(.btn-sm);
+  &:extend(.btn-default);
+  border: 1px solid lightgray;
+}
+
+.create-post {
+  &:extend(.btn);
+  &:extend(.btn-primary);
+}
+
+.home {
+  &:extend(.btn-sm);
+  &:extend(.btn-default);
+  border: 1px solid lightgray;
+}
+
+input[type=submit]{
+  &:extend(.btn);
+  &:extend(.btn-primary);
+}
+
+dd.info {
+  &:extend(.post-meta);
+}

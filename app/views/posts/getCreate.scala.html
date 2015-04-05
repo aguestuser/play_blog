@@ -1,10 +1,21 @@
-@(postForm: Form[Post])
+@(title: String, postForm: Form[Post])
 
-@import helper.{form,inputText,textarea}
+    @import helper.{form,inputText,textarea}
 
-<h1>New Post</h1>
-@form(action = routes.PostController.create()) {
-    @inputText(postForm("title"))
-    @textarea(postForm("body"))
-    <input type="submit" value="Save">
+@main(title){
+
+    <div class="row">
+        <div class="col">
+            <h1>New Post</h1>
+            @form(action = routes.PostController.create()) {
+                @inputText(postForm("Title"))
+                @textarea(postForm("Body"))
+                <input type="submit" value="Save">
+                }
+        </div>
+    </div>
+
 }
+
+
+
