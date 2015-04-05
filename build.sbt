@@ -16,4 +16,6 @@ libraryDependencies ++= Seq("com.github.nscala-time" %% "nscala-time" % "1.8.0")
 
 libraryDependencies ~= { _.map(_.exclude("org.slf4j", "slf4j-simple")) }
 
-unmanagedResourceDirectories in Test <+=  baseDirectory ( _ /"target/web/public/test" )  
+unmanagedResourceDirectories in Test <+=  baseDirectory ( _ /"target/web/public/test" )
+
+herokuAppName in Compile := "sillyblog"

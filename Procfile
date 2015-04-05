@@ -1,0 +1,1 @@
+web: target/universal/stage/bin/silly_blog -DapplyEvolutions.default=true -Dhttp.port=$PORT
